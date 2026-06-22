@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+/* =========================
+   DESIGN SYSTEM - PERFECT MATCH
+========================= */
+
+:root{
+    /* BACKGROUND - EXACT FROM IMAGE */
+    --bg-primary:#0a0a0a;
+    --bg-secondary:#151515;
+    --bg-soft:#1a1a1a;
+    --bg-card:#121212;
+
+    /* TEXT - WARM GOLDEN TONE */
+    --text-primary:#f8f4ed;
+    --text-secondary:#d4c9b5;
+    --text-muted:#a89988;
+    --text-dim:#7a6f62;
+
+    /* ACCENT - GOLDEN HOUR VIBE */
+    --accent:#e2c997;
+    --accent-hover:#d4b384;
+    --accent-dark:#b89a6e;
+
+    /* BORDER */
+    --border-soft:rgba(255,255,255,.06);
+    --border-gold:rgba(226,201,151,.15);
+
+    /* BASIC */
+    --white:#ffffff;
+    --black:#000000;
+
+    /* SHADOW - DEEPER FOR DEPTH */
+    --shadow-soft:0 20px 60px rgba(0,0,0,.4);
+    --shadow-hover:0 25px 70px rgba(0,0,0,.5);
+
+    /* RADIUS */
+    --radius-lg:28px;
+    --radius-md:16px;
+    --radius-full:999px;
+
+    /* TRANSITION */
+    --transition:.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =========================
+   RESET - SAME
+========================= */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg-primary);
+    color:var(--text-primary);
+    overflow-x:hidden;
+    line-height:1.65;
+}
+
+/* =========================
+   GLOBAL - ENHANCED
+========================= */
+
+.container-custom{
+    width:90%;
+    max-width:1400px;
+    margin:auto;
+}
+
+.section-padding{
+    padding:160px 0;
+}
+
+.text-gradient{
+    background:
+        linear-gradient(
+            135deg,
+            var(--accent) 0%,
+            #f8f4ed 50%,
+            var(--accent-dark) 100%
+        );
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+}
+
+.glass-effect{
+    background:rgba(255,255,255,.04);
+    backdrop-filter:blur(24px);
+    border:1px solid var(--border-gold);
+    box-shadow:var(--shadow-soft);
+}
+
+/* =========================
+   BUTTONS - REFINED
+========================= */
+
+.btn-primary-travel{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px 40px;
+    border-radius:var(--radius-full);
+    background:linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+    color:var(--bg-primary);
+    text-decoration:none;
+    font-weight:700;
+    font-size:1rem;
+    letter-spacing:.5px;
+    transition:all var(--transition);
+    position:relative;
+    overflow:hidden;
+}
+
+.btn-primary-travel:hover{
+    background:linear-gradient(135deg, var(--accent-hover) 0%, var(--accent-dark) 100%);
+    transform:translateY(-4px);
+    box-shadow:var(--shadow-hover);
+}
+
+.btn-primary-travel:active{
+    transform:translateY(-2px);
+}
+
+.btn-secondary-travel{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px 40px;
+    border-radius:var(--radius-full);
+    border:1px solid var(--border-gold);
+    color:var(--text-primary);
+    text-decoration:none;
+    font-weight:600;
+    font-size:1rem;
+    background:rgba(226,201,151,.08);
+    backdrop-filter:blur(12px);
+    transition:all var(--transition);
+}
+
+.btn-secondary-travel:hover{
+    background:rgba(226,201,151,.15);
+    border-color:var(--accent);
+    color:var(--accent);
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-soft);
+}
+
+/* =========================
+   ADDITIONAL UTILITIES
+========================= */
+
+.card-hover{
+    transition:all var(--transition);
+}
+
+.card-hover:hover{
+    transform:translateY(-8px);
+    box-shadow:var(--shadow-hover);
+}
+
+.border-gold{
+    border-color:var(--border-gold) !important;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width:768px){
+    .section-padding{
+        padding:100px 0;
+    }
+    
+    .container-custom{
+        width:95%;
+    }
+}
+
