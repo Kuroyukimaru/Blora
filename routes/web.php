@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\TiketWahanaController;
 use App\Http\Controllers\Admin\PaketController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\OlehOlehController;
+use App\Http\Controllers\Admin\PaketBundlingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +23,7 @@ Route::get('/', function () {
 
     $menus = Menu::latest()->get();
 
-    $tiketWahanas =
-        TiketWahana::latest()->get();
+    $tiketWahanas = TiketWahana::latest()->get();
 
     return view(
         'public.home',
@@ -59,14 +60,11 @@ Route::get('/menu', function () {
 
 Route::get('/tiket-wahana', function () {
 
-    $tiketWahanas =
-        TiketWahana::latest()->get();
+    $tiketWahanas = TiketWahana::latest()->get();
 
     return view(
         'public.tiket-wisata.index',
-        compact(
-            'tiketWahanas'
-        )
+        compact('tiketWahanas')
     );
 
 });
@@ -79,14 +77,12 @@ Route::get('/tiket-wahana', function () {
 
 Route::get(
     '/admin/login',
-    [AuthController::class,'login']
-)->name(
-    'admin.login'
-);
+    [AuthController::class, 'login']
+)->name('admin.login');
 
 Route::post(
     '/admin/login',
-    [AuthController::class,'authenticate']
+    [AuthController::class, 'authenticate']
 );
 
 /*
@@ -95,9 +91,7 @@ Route::post(
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(
-    'auth:admin'
-)->group(function () {
+Route::middleware('auth:admin')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
@@ -107,7 +101,7 @@ Route::middleware(
 
     Route::get(
         '/admin/dashboard',
-        [AuthController::class,'dashboard']
+        [AuthController::class, 'dashboard']
     );
 
     /*
@@ -118,7 +112,7 @@ Route::middleware(
 
     Route::post(
         '/admin/logout',
-        [AuthController::class,'logout']
+        [AuthController::class, 'logout']
     );
 
     /*
@@ -127,21 +121,19 @@ Route::middleware(
     |--------------------------------------------------------------------------
     */
 
-    Route::prefix(
-        'admin/menu'
-    )->group(function () {
+    Route::prefix('admin/menu')->group(function () {
 
-        Route::get('/', [MenuController::class,'index']);
+        Route::get('/', [MenuController::class, 'index']);
 
-        Route::get('/create', [MenuController::class,'create']);
+        Route::get('/create', [MenuController::class, 'create']);
 
-        Route::post('/store', [MenuController::class,'store']);
+        Route::post('/store', [MenuController::class, 'store']);
 
-        Route::get('/edit/{id}', [MenuController::class,'edit']);
+        Route::get('/edit/{id}', [MenuController::class, 'edit']);
 
-        Route::put('/update/{id}', [MenuController::class,'update']);
+        Route::put('/update/{id}', [MenuController::class, 'update']);
 
-        Route::delete('/delete/{id}', [MenuController::class,'destroy']);
+        Route::delete('/delete/{id}', [MenuController::class, 'destroy']);
 
     });
 
@@ -151,47 +143,61 @@ Route::middleware(
     |--------------------------------------------------------------------------
     */
 
-    Route::prefix(
-        'admin/tiket-wahana'
-    )->group(function () {
+    Route::prefix('admin/tiket-wahana')->group(function () {
 
-        Route::get('/', [TiketWahanaController::class,'index']);
+        Route::get('/', [TiketWahanaController::class, 'index']);
 
-        Route::get('/create', [TiketWahanaController::class,'create']);
+        Route::get('/create', [TiketWahanaController::class, 'create']);
 
-        Route::post('/store', [TiketWahanaController::class,'store']);
+        Route::post('/store', [TiketWahanaController::class, 'store']);
 
-        Route::get('/edit/{id}', [TiketWahanaController::class,'edit']);
+        Route::get('/edit/{id}', [TiketWahanaController::class, 'edit']);
 
-        Route::put('/update/{id}', [TiketWahanaController::class,'update']);
+        Route::put('/update/{id}', [TiketWahanaController::class, 'update']);
 
-        Route::delete('/delete/{id}', [TiketWahanaController::class,'destroy']);
+        Route::delete('/delete/{id}', [TiketWahanaController::class, 'destroy']);
 
     });
 
     /*
-    |--------------------------------------------------------------------------
-    | PAKET
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| PAKET BUNDLING
+|--------------------------------------------------------------------------
+*/
 
-    Route::prefix(
-        'admin/paket'
-    )->group(function () {
+Route::prefix('admin/paketbundling')->group(function () {
 
-        Route::get('/', [PaketController::class,'index']);
+    Route::get(
+        '/',
+        [PaketBundlingController::class, 'index']
+    )->name('admin.paketbundling.index');
 
-        Route::get('/create', [PaketController::class,'create']);
+    Route::get(
+        '/create',
+        [PaketBundlingController::class, 'create']
+    )->name('admin.paketbundling.create');
 
-        Route::post('/store', [PaketController::class,'store']);
+    Route::post(
+        '/store',
+        [PaketBundlingController::class, 'store']
+    )->name('admin.paketbundling.store');
 
-        Route::get('/edit/{id}', [PaketController::class,'edit']);
+    Route::get(
+        '/edit/{id}',
+        [PaketBundlingController::class, 'edit']
+    )->name('admin.paketbundling.edit');
 
-        Route::put('/update/{id}', [PaketController::class,'update']);
+    Route::put(
+        '/update/{id}',
+        [PaketBundlingController::class, 'update']
+    )->name('admin.paketbundling.update');
 
-        Route::delete('/delete/{id}', [PaketController::class,'destroy']);
+    Route::delete(
+        '/delete/{id}',
+        [PaketBundlingController::class, 'destroy']
+    )->name('admin.paketbundling.destroy');
 
-    });
+});
 
     /*
     |--------------------------------------------------------------------------
@@ -199,39 +205,77 @@ Route::middleware(
     |--------------------------------------------------------------------------
     */
 
-    Route::prefix(
-        'admin/event'
-    )->group(function () {
+    Route::prefix('admin/event')->group(function () {
 
         Route::get(
             '/',
-            [EventController::class,'index']
+            [EventController::class, 'index']
         )->name('event.index');
 
         Route::get(
             '/create',
-            [EventController::class,'create']
+            [EventController::class, 'create']
         )->name('event.create');
 
         Route::post(
             '/store',
-            [EventController::class,'store']
+            [EventController::class, 'store']
         )->name('event.store');
 
         Route::get(
             '/edit/{id}',
-            [EventController::class,'edit']
+            [EventController::class, 'edit']
         )->name('event.edit');
 
         Route::put(
             '/update/{id}',
-            [EventController::class,'update']
+            [EventController::class, 'update']
         )->name('event.update');
 
         Route::delete(
             '/delete/{id}',
-            [EventController::class,'destroy']
+            [EventController::class, 'destroy']
         )->name('event.destroy');
+
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | OLEH-OLEH
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('admin/oleholeh')->group(function () {
+
+        Route::get(
+            '/',
+            [OlehOlehController::class, 'index']
+        )->name('admin.oleholeh.index');
+
+        Route::get(
+            '/create',
+            [OlehOlehController::class, 'create']
+        )->name('admin.oleholeh.create');
+
+        Route::post(
+            '/store',
+            [OlehOlehController::class, 'store']
+        )->name('admin.oleholeh.store');
+
+        Route::get(
+            '/edit/{id}',
+            [OlehOlehController::class, 'edit']
+        )->name('admin.oleholeh.edit');
+
+        Route::put(
+            '/update/{id}',
+            [OlehOlehController::class, 'update']
+        )->name('admin.oleholeh.update');
+
+        Route::delete(
+            '/delete/{id}',
+            [OlehOlehController::class, 'destroy']
+        )->name('admin.oleholeh.destroy');
 
     });
 
