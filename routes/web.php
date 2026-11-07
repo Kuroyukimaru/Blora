@@ -2,280 +2,478 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Models\Menu;
-use App\Models\TiketWahana;
+use App\Http\Controllers\Public\EventController as PublicEventController;
+use App\Http\Controllers\Public\HomeController as PublicHomeController;
+use App\Http\Controllers\Public\MenuController as PublicMenuController;
+use App\Http\Controllers\Public\OlehOlehController as PublicOlehOlehController;
+use App\Http\Controllers\Public\PaketBundlingController as PublicPaketBundlingController;
+use App\Http\Controllers\Public\TiketWahanaController as PublicTiketWahanaController;
+use App\Http\Controllers\Public\PesananController as PublicPesananController;
 
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\MenuController;
-use App\Http\Controllers\Admin\TiketWahanaController;
-use App\Http\Controllers\Admin\PaketController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OlehOlehController;
 use App\Http\Controllers\Admin\PaketBundlingController;
+use App\Http\Controllers\Admin\TiketWahanaController;
 
-/*
-|--------------------------------------------------------------------------
-| PUBLIC HOME
-|--------------------------------------------------------------------------
-*/
+use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
+use App\Http\Controllers\Kasir\MenuOrderController;
+use App\Http\Controllers\Kasir\OlehOlehOrderController;
+use App\Http\Controllers\Kasir\TiketWahanaController as KasirTiketWahanaController;
 
-Route::get('/', function () {
-
-    $menus = Menu::latest()->get();
-
-    $tiketWahanas = TiketWahana::latest()->get();
-
-    return view(
-        'public.home',
-        compact(
-            'menus',
-            'tiketWahanas'
-        )
-    );
-
-});
-
-/*
-|--------------------------------------------------------------------------
-| PUBLIC MENU
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/menu', function () {
-
-    $menus = Menu::latest()->get();
-
-    return view(
-        'public.menu.index',
-        compact('menus')
-    );
-
-});
-
-/*
-|--------------------------------------------------------------------------
-| PUBLIC TIKET WAHANA
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/tiket-wahana', function () {
-
-    $tiketWahanas = TiketWahana::latest()->get();
-
-    return view(
-        'public.tiket-wisata.index',
-        compact('tiketWahanas')
-    );
-
-});
-
-/*
-|--------------------------------------------------------------------------
-| AUTH ADMIN
-|--------------------------------------------------------------------------
-*/
-
-Route::get(
-    '/admin/login',
-    [AuthController::class, 'login']
-)->name('admin.login');
-
-Route::post(
-    '/admin/login',
-    [AuthController::class, 'authenticate']
-);
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN AREA
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware('auth:admin')->group(function () {
-
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get(
-        '/admin/dashboard',
-        [AuthController::class, 'dashboard']
-    );
-
-    /*
-    |--------------------------------------------------------------------------
-    | LOGOUT
-    |--------------------------------------------------------------------------
-    */
-
-    Route::post(
-        '/admin/logout',
-        [AuthController::class, 'logout']
-    );
-
-    /*
-    |--------------------------------------------------------------------------
-    | MENU
-    |--------------------------------------------------------------------------
-    */
-
-    Route::prefix('admin/menu')->group(function () {
-
-        Route::get('/', [MenuController::class, 'index']);
-
-        Route::get('/create', [MenuController::class, 'create']);
-
-        Route::post('/store', [MenuController::class, 'store']);
-
-        Route::get('/edit/{id}', [MenuController::class, 'edit']);
-
-        Route::put('/update/{id}', [MenuController::class, 'update']);
-
-        Route::delete('/delete/{id}', [MenuController::class, 'destroy']);
-
-    });
-
-    /*
-    |--------------------------------------------------------------------------
-    | TIKET WAHANA
-    |--------------------------------------------------------------------------
-    */
-
-    Route::prefix('admin/tiket-wahana')->group(function () {
-
-        Route::get('/', [TiketWahanaController::class, 'index']);
-
-        Route::get('/create', [TiketWahanaController::class, 'create']);
-
-        Route::post('/store', [TiketWahanaController::class, 'store']);
-
-        Route::get('/edit/{id}', [TiketWahanaController::class, 'edit']);
-
-        Route::put('/update/{id}', [TiketWahanaController::class, 'update']);
-
-        Route::delete('/delete/{id}', [TiketWahanaController::class, 'destroy']);
-
-    });
-
-    /*
-|--------------------------------------------------------------------------
-| PAKET BUNDLING
-|--------------------------------------------------------------------------
-*/
-
-Route::prefix('admin/paketbundling')->group(function () {
-
-    Route::get(
-        '/',
-        [PaketBundlingController::class, 'index']
-    )->name('admin.paketbundling.index');
-
-    Route::get(
-        '/create',
-        [PaketBundlingController::class, 'create']
-    )->name('admin.paketbundling.create');
-
-    Route::post(
-        '/store',
-        [PaketBundlingController::class, 'store']
-    )->name('admin.paketbundling.store');
-
-    Route::get(
-        '/edit/{id}',
-        [PaketBundlingController::class, 'edit']
-    )->name('admin.paketbundling.edit');
-
-    Route::put(
-        '/update/{id}',
-        [PaketBundlingController::class, 'update']
-    )->name('admin.paketbundling.update');
-
-    Route::delete(
-        '/delete/{id}',
-        [PaketBundlingController::class, 'destroy']
-    )->name('admin.paketbundling.destroy');
-
-});
-
-    /*
-    |--------------------------------------------------------------------------
-    | EVENT
-    |--------------------------------------------------------------------------
-    */
-
-    Route::prefix('admin/event')->group(function () {
+Route::name('public.')
+    ->group(function () {
 
         Route::get(
             '/',
-            [EventController::class, 'index']
+            [PublicHomeController::class, 'index']
+        )->name('home');
+
+        Route::get(
+            '/menu',
+            [PublicMenuController::class, 'index']
+        )->name('menu.index');
+
+        Route::get(
+            '/menu/{id}',
+            [PublicMenuController::class, 'show']
+        )->whereNumber('id')->name('menu.show');
+
+        Route::get(
+            '/wahana',
+            [PublicTiketWahanaController::class, 'index']
+        )->name('tiket-wahana.index');
+
+        Route::get(
+            '/wahana/{id}',
+            [PublicTiketWahanaController::class, 'show']
+        )->whereNumber('id')->name('tiket-wahana.show');
+
+        Route::get(
+            '/oleh-oleh',
+            [PublicOlehOlehController::class, 'index']
+        )->name('oleholeh.index');
+
+        Route::get(
+            '/oleh-oleh/{id}',
+            [PublicOlehOlehController::class, 'show']
+        )->whereNumber('id')->name('oleholeh.show');
+
+        Route::get(
+            '/paket-bundling',
+            [PublicPaketBundlingController::class, 'index']
+        )->name('paketbundling.index');
+
+        Route::get(
+            '/paket-bundling/{id}',
+            [PublicPaketBundlingController::class, 'show']
+        )->whereNumber('id')->name('paketbundling.show');
+
+        Route::get(
+            '/event',
+            [PublicEventController::class, 'index']
         )->name('event.index');
 
         Route::get(
-            '/create',
-            [EventController::class, 'create']
-        )->name('event.create');
-
-        Route::post(
-            '/store',
-            [EventController::class, 'store']
-        )->name('event.store');
-
-        Route::get(
-            '/edit/{id}',
-            [EventController::class, 'edit']
-        )->name('event.edit');
-
-        Route::put(
-            '/update/{id}',
-            [EventController::class, 'update']
-        )->name('event.update');
-
-        Route::delete(
-            '/delete/{id}',
-            [EventController::class, 'destroy']
-        )->name('event.destroy');
+            '/event/{id}',
+            [PublicEventController::class, 'show']
+        )->whereNumber('id')->name('event.show');
 
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | OLEH-OLEH
-    |--------------------------------------------------------------------------
-    */
+Route::controller(PublicPesananController::class)->group(function () {
 
-    Route::prefix('admin/oleholeh')->group(function () {
+    Route::get('/keranjang', 'keranjang')
+        ->name('pesanan.keranjang');
+
+    Route::post('/keranjang/tambah', 'tambah')
+        ->name('pesanan.keranjang.tambah');
+
+    Route::patch('/keranjang/update', 'update')
+        ->name('pesanan.keranjang.update');
+
+    Route::delete('/keranjang/{key}', 'hapus')
+        ->name('pesanan.keranjang.hapus');
+
+    Route::delete('/keranjang', 'kosongkan')
+        ->name('pesanan.keranjang.kosongkan');
+
+    Route::get('/pembayaran', 'checkout')
+        ->name('pesanan.pembayaran');
+
+    Route::get('/checkout', 'checkout')
+        ->name('pesanan.checkout');
+
+    Route::post('/checkout', 'store')
+        ->name('pesanan.store');
+
+    Route::post('/midtrans/notification', 'midtransNotification')
+        ->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ])
+        ->name('midtrans.notification');
+
+    Route::get('/pesanan/{kode}/berhasil', 'berhasil')
+        ->where('kode', '[A-Za-z0-9_-]+')
+        ->name('pesanan.berhasil');
+});
+
+Route::controller(AuthController::class)->group(function () {
+
+    Route::get(
+        '/login',
+        'login'
+    )->name('login');
+
+    Route::get(
+        '/admin/login',
+        'login'
+    )->name('admin.login');
+
+    Route::post(
+        '/login',
+        'authenticate'
+    )->name('login.process');
+
+});
+
+Route::middleware('auth:admin')->group(function () {
+
+    Route::post(
+        '/logout',
+        [AuthController::class, 'logout']
+    )->name('logout');
+
+    Route::middleware('role:admin')->group(function () {
 
         Route::get(
-            '/',
-            [OlehOlehController::class, 'index']
-        )->name('admin.oleholeh.index');
+            '/admin/dashboard',
+            [AdminDashboardController::class, 'index']
+        )->name('admin.dashboard');
+
+        Route::prefix('admin/menu')
+            ->name('admin.menu.')
+            ->controller(MenuController::class)
+            ->group(function () {
+
+                Route::get(
+                    '/',
+                    'index'
+                )->name('index');
+
+                Route::get(
+                    '/create',
+                    'create'
+                )->name('create');
+
+                Route::post(
+                    '/',
+                    'store'
+                )->name('store');
+
+                Route::get(
+                    '/{menu}',
+                    'show'
+                )->name('show');
+
+                Route::get(
+                    '/{menu}/edit',
+                    'edit'
+                )->name('edit');
+
+                Route::put(
+                    '/{menu}',
+                    'update'
+                )->name('update');
+
+                Route::delete(
+                    '/{menu}',
+                    'destroy'
+                )->name('destroy');
+
+            });
+
+        Route::prefix('admin/tiket-wahana')
+            ->name('admin.tiket-wahana.')
+            ->controller(TiketWahanaController::class)
+            ->group(function () {
+
+                Route::get(
+                    '/',
+                    'index'
+                )->name('index');
+
+                Route::get(
+                    '/create',
+                    'create'
+                )->name('create');
+
+                Route::post(
+                    '/',
+                    'store'
+                )->name('store');
+
+                Route::get(
+                    '/{id}/edit',
+                    'edit'
+                )->whereNumber('id')
+                 ->name('edit');
+
+                Route::put(
+                    '/{id}',
+                    'update'
+                )->whereNumber('id')
+                 ->name('update');
+
+                Route::delete(
+                    '/{id}',
+                    'destroy'
+                )->whereNumber('id')
+                 ->name('destroy');
+
+            });
+
+        Route::prefix('admin/paketbundling')
+            ->name('admin.paketbundling.')
+            ->controller(PaketBundlingController::class)
+            ->group(function () {
+
+                Route::get(
+                    '/',
+                    'index'
+                )->name('index');
+
+                Route::get(
+                    '/create',
+                    'create'
+                )->name('create');
+
+                Route::post(
+                    '/',
+                    'store'
+                )->name('store');
+
+                Route::get(
+                    '/{id}/edit',
+                    'edit'
+                )->whereNumber('id')
+                 ->name('edit');
+
+                Route::put(
+                    '/{id}',
+                    'update'
+                )->whereNumber('id')
+                 ->name('update');
+
+                Route::delete(
+                    '/{id}',
+                    'destroy'
+                )->whereNumber('id')
+                 ->name('destroy');
+
+            });
+
+        Route::prefix('admin/event')
+            ->name('admin.event.')
+            ->controller(EventController::class)
+            ->group(function () {
+
+                Route::get(
+                    '/',
+                    'index'
+                )->name('index');
+
+                Route::get(
+                    '/create',
+                    'create'
+                )->name('create');
+
+                Route::post(
+                    '/',
+                    'store'
+                )->name('store');
+
+                Route::get(
+                    '/{id}/edit',
+                    'edit'
+                )->whereNumber('id')
+                 ->name('edit');
+
+                Route::put(
+                    '/{id}',
+                    'update'
+                )->whereNumber('id')
+                 ->name('update');
+
+                Route::delete(
+                    '/{id}',
+                    'destroy'
+                )->whereNumber('id')
+                 ->name('destroy');
+
+            });
+
+        Route::prefix('admin/oleholeh')
+            ->name('admin.oleholeh.')
+            ->controller(OlehOlehController::class)
+            ->group(function () {
+
+                Route::get(
+                    '/',
+                    'index'
+                )->name('index');
+
+                Route::get(
+                    '/create',
+                    'create'
+                )->name('create');
+
+                Route::post(
+                    '/',
+                    'store'
+                )->name('store');
+
+                Route::get(
+                    '/{id}/edit',
+                    'edit'
+                )->whereNumber('id')
+                 ->name('edit');
+
+                Route::put(
+                    '/{id}',
+                    'update'
+                )->whereNumber('id')
+                 ->name('update');
+
+                Route::delete(
+                    '/{id}',
+                    'destroy'
+                )->whereNumber('id')
+                 ->name('destroy');
+
+            });
+
+    });
+
+    Route::middleware(
+        'role:kasir_menu,kasir_wahana,kasir_oleholeh'
+    )->group(function () {
 
         Route::get(
-            '/create',
-            [OlehOlehController::class, 'create']
-        )->name('admin.oleholeh.create');
+            '/kasir/dashboard',
+            [KasirDashboardController::class, 'index']
+        )->name('kasir.dashboard');
+
+    });
+
+    Route::middleware('role:kasir_menu')
+        ->prefix('kasir-menu')
+        ->name('kasir.menu.')
+        ->group(function () {
+
+        Route::get(
+            '/home',
+            [KasirDashboardController::class, 'index']
+        )->name('dashboard');
+
+        Route::get(
+            '/pesanan',
+            [MenuOrderController::class, 'index']
+        )->name('pesanan');
+
+        Route::get(
+            '/pesanan/{id_pesanan}',
+            [MenuOrderController::class, 'show']
+        )->whereNumber('id_pesanan')
+         ->name('pesanan.show');
 
         Route::post(
-            '/store',
-            [OlehOlehController::class, 'store']
-        )->name('admin.oleholeh.store');
+            '/pesanan/{id_pesanan}/verify',
+            [MenuOrderController::class, 'verify']
+        )->whereNumber('id_pesanan')
+         ->name('pesanan.verify');
 
         Route::get(
-            '/edit/{id}',
-            [OlehOlehController::class, 'edit']
-        )->name('admin.oleholeh.edit');
+            '/pesanan-bundling',
+            [MenuOrderController::class, 'bundling']
+        )->name('bundling');
+
+    });
+
+    Route::middleware('role:kasir_wahana')
+        ->prefix('kasir-wahana')
+        ->name('kasir.wahana.')
+        ->group(function () {
+
+        Route::get(
+            '/home',
+            [KasirDashboardController::class, 'index']
+        )->name('dashboard');
+
+        Route::get(
+            '/pesanan',
+            [KasirTiketWahanaController::class, 'index']
+        )->name('orders');
+
+        Route::get(
+            '/pesanan/{id_pesanan}',
+            [KasirTiketWahanaController::class, 'show']
+        )->whereNumber('id_pesanan')
+         ->name('orders.show');
+
+        Route::post(
+            '/pesanan/{id_pesanan}/verify',
+            [KasirTiketWahanaController::class, 'verify']
+        )->whereNumber('id_pesanan')
+         ->name('orders.verify');
+
+        Route::get(
+            '/pesanan-bundling',
+            [KasirTiketWahanaController::class, 'bundling']
+        )->name('bundling');
+
+    });
+
+    Route::middleware('role:kasir_oleholeh')
+        ->prefix('kasir-oleholeh')
+        ->name('kasir.oleholeh.')
+        ->group(function () {
+
+        Route::get(
+            '/home',
+            [KasirDashboardController::class, 'index']
+        )->name('dashboard');
+
+        Route::get(
+            '/pesanan',
+            [OlehOlehOrderController::class, 'index']
+        )->name('orders');
+
+        Route::get(
+            '/pesanan/{id_pesanan}',
+            [OlehOlehOrderController::class, 'show']
+        )->whereNumber('id_pesanan')
+         ->name('orders.show');
+
+        Route::post(
+            '/pesanan/{id_pesanan}/verify',
+            [OlehOlehOrderController::class, 'verify']
+        )->whereNumber('id_pesanan')
+         ->name('orders.verify');
+
+        Route::get(
+            '/stok',
+            [OlehOlehOrderController::class, 'stock']
+        )->name('stock');
 
         Route::put(
-            '/update/{id}',
-            [OlehOlehController::class, 'update']
-        )->name('admin.oleholeh.update');
-
-        Route::delete(
-            '/delete/{id}',
-            [OlehOlehController::class, 'destroy']
-        )->name('admin.oleholeh.destroy');
+            '/stok/{id_oleh_oleh}',
+            [OlehOlehOrderController::class, 'updateStock']
+        )->name('stock.update');
 
     });
 

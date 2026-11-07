@@ -9,7 +9,6 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-
     public function up(): void
     {
         Schema::create('menus', function (Blueprint $table) {
@@ -20,7 +19,21 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->id();
+            $table->id('id_menu');
+
+            /*
+            |--------------------------------------------------------------------------
+            | FOREIGN KEY : USER
+            |--------------------------------------------------------------------------
+            */
+
+            $table->foreignId('id_user')
+                ->constrained(
+                    table: 'users',
+                    column: 'id_user'
+                )
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
 
             /*
             |--------------------------------------------------------------------------
@@ -28,10 +41,7 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->string(
-                'nama_menu',
-                255
-            );
+            $table->string('nama_menu', 255);
 
             /*
             |--------------------------------------------------------------------------
@@ -39,15 +49,12 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->enum(
-                'kategori',
-                [
-                    'Minuman',
-                    'Sambal',
-                    'Lainnya',
-                    'Paket'
-                ]
-            )->index();
+            $table->enum('kategori', [
+                'Paket Kenyang',
+                'Minuman',
+                'Sambal',
+                'Lainnya',
+            ]);
 
             /*
             |--------------------------------------------------------------------------
@@ -64,7 +71,7 @@ return new class extends Migration
             */
 
             $table->text('deskripsi')
-                  ->nullable();
+                ->nullable();
 
             /*
             |--------------------------------------------------------------------------
@@ -73,7 +80,7 @@ return new class extends Migration
             */
 
             $table->string('gambar')
-                  ->nullable();
+                ->nullable();
 
             /*
             |--------------------------------------------------------------------------
@@ -81,15 +88,10 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->enum(
-                'status',
-                [
-                    'Tersedia',
-                    'Habis'
-                ]
-            )
-            ->default('Tersedia')
-            ->index();
+            $table->enum('status', [
+                'Tersedia',
+                'Habis',
+            ])->default('Tersedia');
 
             /*
             |--------------------------------------------------------------------------
@@ -105,16 +107,16 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
+            $table->index('id_user');
             $table->index('nama_menu');
-
-            $table->index('created_at');
+            $table->index('kategori');
+            $table->index('status');
         });
     }
 
     /**
      * Reverse the migrations.
      */
-
     public function down(): void
     {
         Schema::dropIfExists('menus');

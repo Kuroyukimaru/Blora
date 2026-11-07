@@ -9,10 +9,9 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-
     public function up(): void
     {
-        Schema::create('pakets', function (Blueprint $table) {
+        Schema::create('pesanans', function (Blueprint $table) {
 
             /*
             |--------------------------------------------------------------------------
@@ -20,64 +19,72 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->id();
+            $table->id('id_pesanan');
 
             /*
             |--------------------------------------------------------------------------
-            | NAMA PAKET
+            | FOREIGN KEY : USER (KASIR)
             |--------------------------------------------------------------------------
             */
 
-            $table->string(
-                'nama_paket',
-                255
-            );
+            $table->foreignId('id_user')
+                  ->nullable()
+                  ->constrained(
+                      table: 'users',
+                      column: 'id_user'
+                  )
+                  ->cascadeOnUpdate()
+                  ->nullOnDelete();
 
             /*
             |--------------------------------------------------------------------------
-            | HARGA PAKET
+            | KODE PESANAN
             |--------------------------------------------------------------------------
             */
 
-            $table->unsignedInteger(
-                'harga'
-            );
+            $table->string('kode_pesanan')->unique();
 
             /*
             |--------------------------------------------------------------------------
-            | GAMBAR
+            | DATA PELANGGAN
             |--------------------------------------------------------------------------
             */
 
-            $table->string(
-                'gambar'
-            )->nullable();
+            $table->string('nama_pelanggan');
+
+            $table->string('no_wa', 20);
 
             /*
             |--------------------------------------------------------------------------
-            | DESKRIPSI
+            | METODE PEMBAYARAN
             |--------------------------------------------------------------------------
             */
 
-            $table->text(
-                'deskripsi'
-            )->nullable();
+            $table->enum('metode_pembayaran', [
+                'Cash',
+                'QRIS'
+            ]);
 
             /*
             |--------------------------------------------------------------------------
-            | STATUS
+            | TOTAL HARGA
             |--------------------------------------------------------------------------
             */
 
-            $table->enum(
-                'status',
-                [
-                    'Aktif',
-                    'Nonaktif'
-                ]
-            )
-            ->default('Aktif')
-            ->index();
+            $table->unsignedBigInteger('total_harga');
+
+            /*
+            |--------------------------------------------------------------------------
+            | STATUS PESANAN
+            |--------------------------------------------------------------------------
+            */
+
+            $table->enum('status', [
+                'Menunggu Pembayaran',
+                'Menunggu Pengambilan',
+                'Selesai',
+                'Batal'
+            ])->default('Menunggu Pembayaran');
 
             /*
             |--------------------------------------------------------------------------
@@ -93,25 +100,18 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->index(
-                'nama_paket'
-            );
-
-            $table->index(
-                'created_at'
-            );
-
+            $table->index('id_user');
+            $table->index('kode_pesanan');
+            $table->index('nama_pelanggan');
+            $table->index('status');
         });
     }
 
     /**
      * Reverse the migrations.
      */
-
     public function down(): void
     {
-        Schema::dropIfExists(
-            'pakets'
-        );
+        Schema::dropIfExists('pesanans');
     }
 };

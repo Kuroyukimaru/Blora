@@ -10,22 +10,65 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('paket_bundling_menus', function (Blueprint $table) {
+    {
+        Schema::create('paket_bundling_menus', function (Blueprint $table) {
 
-        $table->id();
+            /*
+            |--------------------------------------------------------------------------
+            | PRIMARY KEY
+            |--------------------------------------------------------------------------
+            */
 
-        $table->foreignId('paket_bundling_id')
-              ->constrained('paket_bundlings')
-              ->cascadeOnDelete();
+            $table->id('id_paket_bundling_menu');
 
-        $table->foreignId('menu_id')
-              ->constrained('menus')
-              ->cascadeOnDelete();
+            /*
+            |--------------------------------------------------------------------------
+            | FOREIGN KEY : PAKET BUNDLING
+            |--------------------------------------------------------------------------
+            */
 
-        $table->timestamps();
-    });
-}
+            $table->foreignId('id_paket_bundling')
+                  ->constrained(
+                      table: 'paket_bundlings',
+                      column: 'id_paket_bundling'
+                  )
+                  ->cascadeOnUpdate()
+                  ->cascadeOnDelete();
+
+            /*
+            |--------------------------------------------------------------------------
+            | FOREIGN KEY : MENU
+            |--------------------------------------------------------------------------
+            */
+
+            $table->foreignId('id_menu')
+                  ->constrained(
+                      table: 'menus',
+                      column: 'id_menu'
+                  )
+                  ->cascadeOnUpdate()
+                  ->cascadeOnDelete();
+
+            /*
+            |--------------------------------------------------------------------------
+            | TIMESTAMPS
+            |--------------------------------------------------------------------------
+            */
+
+            $table->timestamps();
+
+            /*
+            |--------------------------------------------------------------------------
+            | UNIQUE
+            |--------------------------------------------------------------------------
+            */
+
+            $table->unique([
+                'id_paket_bundling',
+                'id_menu'
+            ]);
+        });
+    }
 
     /**
      * Reverse the migrations.
